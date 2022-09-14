@@ -3,7 +3,7 @@
 const { Sequelize, DataTypes } = require( 'sequelize' );
 const post = require( './post.model' );
 const comment = require('./comment.model')
-const POSTGRES_URL = process.env.DATABASE_URL || "postgres://gufildageljwxd:b5e66e1c01e8b70dc81bd8cf2cab38cadc9ceac4e1532bc7213f564c4af98dbd@ec2-52-212-228-71.eu-west-1.compute.amazonaws.com:5432/dbjc6ifkifjbvr";
+const POSTGRES_URL = process.env.DATABASE_URL || "postgres://vvhjywzvxbcqqt:e41b904e5cca6e8e0873ee39f828222669474e387fe5b4fa4d5c37b4c82fd850@ec2-54-246-185-161.eu-west-1.compute.amazonaws.com:5432/dc1q397lnip5a";
 const collection = require('../collections/user-comment-routes')
 
 const sequelizeOption = {
