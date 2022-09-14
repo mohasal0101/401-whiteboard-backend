@@ -6,10 +6,16 @@ const app = express();
 const notFoundHandler = require( './error-handlers/404' );
 const errorHandler = require( './error-handlers/500' );
 const postRouter = require( './routes/post.route' );
+const commentRoute = require( './routes/comment-route' );
+const postRoute = require( './routes/post.route' );
 
 app.use( cors() );
 app.use( express.json() );
 app.use( postRouter );
+app.use( notFoundHandler );
+app.use( errorHandler );
+app.use(commentRoute);
+app.use(postRoute);
 
 app.get( '/', ( req, res ) => {
     res.status( 200 ).json( {
@@ -18,11 +24,8 @@ app.get( '/', ( req, res ) => {
     } );
 } );
 
-app.use(notFoundHandler );
-app.use( errorHandler );
-
 function start ( port ) {
-    app.listen( port, () => console.log( `Up an running on port ${port}` ) );
+    app.listen( port, () => console.log( `Up, running on port ${port}` ) );
 }
 
 module.exports = {

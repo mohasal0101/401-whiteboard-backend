@@ -1,61 +1,61 @@
-"use strict";
+'use strict';
 
-const express = require("express");
+const express = require( 'express' );
 const router = express.Router();
-const error500 = require("../error-handlers/500");
-
-const { Post } = require("../models/index");
+const { Post, CommentModel } = require( '../models/index' );
 
 // Routes
-router.get("/post", getPosts);
-router.get("/post/:id", error500, getPost);
-router.post("/post", createPost);
-router.put("/post/:id", error500, updatePost);
-router.delete("/post/:id", error500, deletePost);
+router.get( '/post', getAllPosts );
+router.get( '/post/:id', getOnePost );
+router.post( '/post', newPost );
+router.put( '/post/:id', updatePost );
+router.delete( '/post/:id', deletePost );
 
-async function getPosts(req, res) {
-  let allPosts = await Post.findAll();
-  res.status(200).json({
-    allPosts,
-  });
+
+
+
+async function getAllPosts ( req, res ) {
+    let posts = await Post.readWithComments( CommentModel );
+    res.status( 200 ).json( {
+        posts
+    } );
 }
 
-async function getPost(req, res) {
-  const id = req.params.id;
-  const post = await Post.findOne({
-    where: { id: id },
-  });
 
-  res.status(200).json(post);
+async function getOnePost ( req, res ) {
+    const id = req.params.id;
+    const post = await Post.readOneWithComments( id, CommentModel );
+    res.status( 200 ).json( post );
 }
 
-async function createPost(req, res) {
-  
-  const newPost = req.body;
-  const post = await Post.create(newPost);
-  res.status(201).json(post);
+
+async function newPost ( req, res ) {
+    const newPost = req.body;
+    await Post.create( newPost )
+        .then( async () => {
+            await Post.read()
+                .then( ( posts ) => {
+                    res.status( 200 ).json( posts );
+                } );
+        } );
 }
 
-async function updatePost(req, res) {
-  const id = req.params.id;
-  const obj = req.body;
-  const post = await Post.findOne({
-    where: { id: id },
-  });
 
-  const updatedPost = await post.update(obj);
-
-  res.status(200).json(updatedPost);
+async function updatePost ( req, res ) {
+    const id = req.params.id;
+    const obj = req.body;
+    const post = await Post.update( id, obj );
+    res.status( 201 ).json( post );
 }
 
-// function delete post
-async function deletePost(req, res) {
-  const id = req.params.id;
-  const post = await Post.findOne({
-    where: { id: id },
-  });
-  const deletedPost = await post.destroy();
-  res.status(204).json(deletedPost);
+
+async function deletePost ( req, res ) {
+    const id = req.params.id;
+    await Post.delete( id ).then( () => {
+        res.status( 204 ).send( '' );
+    } );
 }
+
+
 
 module.exports = router;
