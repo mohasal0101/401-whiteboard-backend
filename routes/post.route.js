@@ -39,7 +39,6 @@ async function createPost(req, res) {
 async function updatePost(req, res) {
   const id = req.params.id;
   const obj = req.body;
-
   const post = await Post.findOne({
     where: { id: id },
   });
@@ -49,12 +48,14 @@ async function updatePost(req, res) {
   res.status(200).json(updatedPost);
 }
 
+// function delete post
 async function deletePost(req, res) {
   const id = req.params.id;
-  await Post.destroy({
+  const post = await Post.findOne({
     where: { id: id },
   });
-  res.status(200).send("Post deleted successfully");
+  const deletedPost = await post.destroy();
+  res.status(204).json(deletedPost);
 }
 
 module.exports = router;

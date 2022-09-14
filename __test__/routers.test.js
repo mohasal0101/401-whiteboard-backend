@@ -5,6 +5,11 @@ const server = require( '../server' );
 const request = supertest( server.app );
 jest.setTimeout(10000);
 
+
+
+
+
+
 describe('Test Post get routes', () => {
     it('Get all posts', async () => {
         const res = await request.get('/post');
@@ -13,7 +18,7 @@ describe('Test Post get routes', () => {
     it('Get one post', async () => {
         const res = await request.get('/post/1');
         expect(res.status).toEqual(200);
-        expect(res.text).toEqual('{"img":"done:done"}');
+        expect(res.text).toEqual('{:"done:done"}');
     });
 });
 
@@ -43,5 +48,5 @@ describe('Test Post delete route', () => {
         const res = await request.delete('/post/16');
         expect(res.status).toEqual(204);
         expect(res.text).toEqual('');
-    });
-});
+    })
+})
