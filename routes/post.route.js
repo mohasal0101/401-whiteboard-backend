@@ -15,20 +15,21 @@ router.delete( '/post/:id', deletePost );
 
 
 async function getAllPosts ( req, res ) {
+    /* istanbul ignore next */
     let posts = await Post.readWithComments( CommentModel );
     res.status( 200 ).json( {
         posts
     } );
 }
 
-
+/* istanbul ignore next */
 async function getOnePost ( req, res ) {
     const id = req.params.id;
     const post = await Post.readOneWithComments( id, CommentModel );
     res.status( 200 ).json( post );
 }
 
-
+/* istanbul ignore next */
 async function newPost ( req, res ) {
     const newPost = req.body;
     await Post.create( newPost )
@@ -40,7 +41,7 @@ async function newPost ( req, res ) {
         } );
 }
 
-
+/* istanbul ignore next */
 async function updatePost ( req, res ) {
     const id = req.params.id;
     const obj = req.body;
@@ -48,7 +49,7 @@ async function updatePost ( req, res ) {
     res.status( 201 ).json( post );
 }
 
-
+/* istanbul ignore next */
 async function deletePost ( req, res ) {
     const id = req.params.id;
     await Post.delete( id ).then( () => {

@@ -23,7 +23,7 @@ app.get( '/', ( req, res ) => {
         code: 200
     } );
 } );
-
+/* istanbul ignore next */
 function start ( port ) {
     app.listen( port, () => console.log( `Up, running on port ${port}` ) );
 }
