@@ -7,7 +7,6 @@ const notFoundHandler = require( './error-handlers/404' );
 const errorHandler = require( './error-handlers/500' );
 const postRouter = require( './routes/post.route' );
 const commentRoute = require( './routes/comment-route' );
-const postRoute = require( './routes/post.route' );
 const userRoute = require('./routes/user.route');
 
 
@@ -17,7 +16,6 @@ app.use( postRouter );
 app.use( notFoundHandler );
 app.use( errorHandler );
 app.use(commentRoute);
-app.use(postRoute);
 app.use( userRoute );
 
 

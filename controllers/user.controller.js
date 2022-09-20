@@ -1,73 +1,62 @@
-"use strict";
-const bcrypt = require("bcrypt");
-const base64 = require("base-64");
+'use strict';
+const bcrypt = require('bcrypt');
+const base64 = require('base-64');
 
-const { Users } = require("../models/index");
+const User = require('../models').users;
 
 const signup = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { userName, password } = req.body;
     const data = {
-      username: username,
-      email: email,
-      password: await bcrypt.hash(password, 10),
+      userName,
+      password: await bcrypt.hash(password, 10)
     };
-    const newUser = await Users.create(data);
-    res.status(201).json(newUser);
-  } catch (error) {
-    /* istanbul ignore next */
-    console.log(error);
+
+    const user = await User.create(data);
+
+    if(user) {
+      res.status(201).json(user)
+    }
+  } catch(e) {
+    console.log(e)
   }
-};
+}
 
 const login = async (req, res) => {
-  try {
-    if (!req.headers.authorization) return res.status(401).send("Bad Request");
-    const encodedHeader = req.headers.authorization.split(" ").pop();
-    const [email, password] = base64.decode(encodedHeader).split(":");
-    console.log(email, password);
+  const basicHeader = req.headers.authorization.split(' ');
+  // console.log(basicHeader)
+  const encodedValue = basicHeader.pop();
+  // console.log(encodedValue)
+  const decodedValue = base64.decode(encodedValue);
+  console.log(decodedValue)
+  const [ password ] = decodedValue.split(':');
 
-    let user = await Users.findOne({
-      where: {
-        email: email,
-      },
-    });
-
-    if (!user) {
-      user = await Users.findOne({
-        where: {
-          username: email,
-        },
-      });
+  const user = await User.findOne({
+    where: {
+      userName: req.body.userName
     }
+  });
 
-    if (user) {
-      const isAuthorized = await bcrypt.compare(password, user.password);
+  if(user) {
+    const isSame = await bcrypt.compare(password, user.password);
 
-      if (isAuthorized) {
-        return res.status(200).json(user);
-      } else {
-        return res.status(401).send("Please Check Your Username and Password");
-      }
+    if(isSame) {
+      return res.status(200).json(user)
     } else {
-      return res.status(401).send("Please Check Your Username and Password");
+      return res.status(401).send('You are not authorized');
     }
-  } catch (error) {
-    /* istanbul ignore next */
-    console.log(error);
+  } else {
+    return res.status(401).send('You are not authorized');
   }
-};
+}
 
 const allUser = async (req, res) => {
-  const users = await Users.findAll();
-  return res.json(users);
-};
-
-
+  const users = await User.findAll();
+  res.json(users);
+}
 
 module.exports = {
   signup,
   allUser,
-  login,
-  
-};
+  login
+}
