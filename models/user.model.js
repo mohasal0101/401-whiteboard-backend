@@ -21,16 +21,16 @@ const User = sequelize.define( 'User', {
     token: {
         type: DataTypes.VIRTUAL,
         get: function () {
-            return jwt.sign( {username: this.username}, process.env.SECRET);
+            return jwt.sign( {username: this.username}, process.env.JWT_SECRET);
         },
         set ( tokenObj ) {
-            return jwt.sign( tokenObj, process.env.SECRET );
+            return jwt.sign( tokenObj, process.env.JWT_SECRET );
         }
     }
 } );
 
 User.authenticateToken = token => {
-    return jwt.verify( token, process.env.SECRET, ( err, decoded ) => {
+    return jwt.verify( token, process.env.JWT_SECRET, ( err, decoded ) => {
         if ( err ) {
             return err;
         } else {
