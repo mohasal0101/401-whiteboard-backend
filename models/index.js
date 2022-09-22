@@ -34,6 +34,7 @@ commentModel.belongsTo(userModel, {foreignKey: 'ownerID', targetKey: 'id'})
 
 const postCollection = new collection(postModel);
 const commentCollection =new collection(commentModel);
+const userCollection = new collection(userModel);
 
 
 
@@ -42,5 +43,6 @@ module.exports = {
     Post: postCollection,
     Comment: commentCollection,
     CommentModel: commentModel,
-    UserModel: userModel
+    UserModel: userModel,
+    User: userCollection
 };
