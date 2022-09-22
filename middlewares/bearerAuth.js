@@ -1,28 +1,33 @@
-'use strict';
+'use state';
 
-const { UserModel } = require( "../models/index" );
+
+const User = require( '../models' ).UserModel;
+const base64 = require( 'base-64' );
+const bcrypt = require( 'bcrypt' );
 
 module.exports = async ( req, res, next ) => {
     if ( !req.headers.authorization ) {
         next( 'Invalid Login' );
+    }
+    const basicHeader = req.headers.authorization.split( ' ' );
+    const encodedValue = basicHeader.pop();
+    const decodedValue = base64.decode( encodedValue );
+    const [ username, password ] = decodedValue.split( ':' );
+    const user = await User.findOne( {
+        where: {
+            username: username
+        }
+    } );
+    if ( user ) {
+        const isSame = await bcrypt.compare( password, user.password );
+        if ( isSame ) {
+            req.user = user;
+            next();
+        } else {
+            next( 'Invalid Login' );
+        }
     } else {
-        const token = req.headers.authorization.split( ' ' ).pop();
-        try {
-            const validUser = await UserModel.authenticateToken( token );
-            const user = await UserModel.findOne( {
-                where: {
-                    username: validUser.username
-                }
-            } );
-            if ( user ) {
-                req.user = user;
-                req.token = user.token;
-                next();
-            } else {
-                next( 'Invalid Login' );
-            }
-        } catch ( error ) {
-            next( error );
-        } 
+        next( 'Invalid Login' );
     }
 }
+
