@@ -42,7 +42,7 @@ module.exports = {
     db: sequelize,
     Post: postCollection,
     Comment: commentCollection,
-    CommentModel: commentModel,
+    commentModel: commentModel,
     UserModel: userModel,
     User: userCollection
 };
