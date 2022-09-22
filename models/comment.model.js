@@ -8,6 +8,10 @@ const Comment = ( sequelize, DataTypes ) => sequelize.define( 'Comment', {
     content: {
         type: DataTypes.STRING,
         defaultValue: 'test'
+    },
+    postID: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
 } );
 

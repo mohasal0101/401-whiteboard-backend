@@ -1,53 +1,45 @@
 'use strict';
 const bcrypt = require( 'bcrypt' );
 const base64 = require( 'base-64' );
-
-const User = require( '../models' ).UserModel;
+const { UserModel } = require( '../models/index' );
 
 const signup = async ( req, res ) => {
     try {
-        const { username, email, password } = req.body;
-        const data = {
-            username,
-            email,
-            password: await bcrypt.hash( password, 15 )
+        req.body.password = await bcrypt.hash( req.body.password, 10 );
+        const user = await UserModel.create( req.body );
+        const output = {
+            user: user,
+            token: user.token
         };
-        const user = await User.create( data );
-        if ( user ) {
-            res.status( 200 ).json( user );
-        }
+        res.status( 201 ).json( output );
     } catch ( error ) {
-        console.log( error );
+        res.status( 403 ).send( 'Error Creating User' );
     }
 };
 
 const allUser = async ( req, res ) => {
-    const users = await User.findAll();
-    res.json( users );
+    const users = await UserModel.findAll();
+    res.status( 200 ).json( users );
 };
 
 const login = async ( req, res ) => {
-    const basicHeader = req.headers.authorization.split( ' ' );
-    const encodedValue = basicHeader.pop();
-    const decodedValue = base64.decode( encodedValue );
-    console.log( decodedValue );
-    const [ username, password ] = decodedValue.split( ':' );
-    const user = await User.findOne( {
-        where: {
-            username: username
-        }
-    } );
-    if ( user ) {
-        const isSame = await bcrypt.compare( password, user.password );
-        if ( isSame ) {
-            return res.status( 200 ).json( user );
+    try {
+        const user = await UserModel.findOne( { where: { username: req.body.username } } );
+        const valid = await bcrypt.compare( req.body.password, user.password );
+        if ( valid ) {
+            const output = {
+                user: user,
+                token: user.token
+            };
+            res.status( 200 ).json( output );
         } else {
-            return res.status( 401 ).send( 'You are not authorized' );
+            throw new Error( 'Invalid Login' );
         }
-    } else {
-        return res.status( 401 ).send( 'You are not authorized' );
+    } catch ( error ) {
+        res.status( 403 ).send( 'Invalid Login' );
     }
 };
+
 
 
 module.exports = {
