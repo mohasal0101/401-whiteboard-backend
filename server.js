@@ -15,7 +15,7 @@ app.use( express.json() );
 app.use( postRouter );
 app.use( notFoundHandler );
 app.use( errorHandler );
-app.use(commentRoute);
+app.use( commentRoute );
 app.use( userRoute );
 
 

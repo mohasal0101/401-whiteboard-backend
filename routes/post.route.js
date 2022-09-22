@@ -3,9 +3,9 @@
 const express = require( 'express' );
 const router = express.Router();
 const { Post, CommentModel } = require( '../models/index' );
+const bearerAuth = require( '../middlewares/bearerAuth' );
 
-// Routes
-router.get( '/post', getAllPosts );
+router.get( '/post', bearerAuth ,getAllPosts );
 router.get( '/post/:id', getOnePost );
 router.post( '/post', newPost );
 router.put( '/post/:id', updatePost );
@@ -15,21 +15,18 @@ router.delete( '/post/:id', deletePost );
 
 
 async function getAllPosts ( req, res ) {
-    /* istanbul ignore next */
     let posts = await Post.readWithComments( CommentModel );
     res.status( 200 ).json( {
         posts
     } );
 }
 
-/* istanbul ignore next */
 async function getOnePost ( req, res ) {
     const id = req.params.id;
-    const post = await Post.readOneWithComments( id, CommentModel );
+    const post = await Post.readWithComments( id, CommentModel );
     res.status( 200 ).json( post );
 }
 
-/* istanbul ignore next */
 async function newPost ( req, res ) {
     const newPost = req.body;
     await Post.create( newPost )
@@ -41,7 +38,6 @@ async function newPost ( req, res ) {
         } );
 }
 
-/* istanbul ignore next */
 async function updatePost ( req, res ) {
     const id = req.params.id;
     const obj = req.body;
@@ -49,7 +45,6 @@ async function updatePost ( req, res ) {
     res.status( 201 ).json( post );
 }
 
-/* istanbul ignore next */
 async function deletePost ( req, res ) {
     const id = req.params.id;
     await Post.delete( id ).then( () => {

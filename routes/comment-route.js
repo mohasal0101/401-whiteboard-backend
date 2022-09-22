@@ -13,18 +13,18 @@ router.delete( '/comment/:id', deleteComment );
 
 
 async function getAllComments ( req, res ) {
-    /* istanbul ignore next */
     let comments = await Comment.read();
     res.status( 200 ).json( {
         comments
     } );
 }
 
-/* istanbul ignore next */
 async function addComment ( req, res ) {
     const postId = req.params.id;
     const content = req.body.content;
-    const obj = {'ownerID': postId ,'content': content};
+    const userID = req.params.userID;
+    const obj = {'ownerID': postId ,'content': content, 'userID': userID};
+
     await Comment.create( obj )
         .then( async () => {
             await Comment.read()
@@ -34,17 +34,15 @@ async function addComment ( req, res ) {
         } );
 }
 
-/* istanbul ignore next */
 async function updateComment ( req, res ) {
     const id = req.params.id;
     const obj = req.body;
     const comment = await Comment.update( id,obj );
     res.status( 201 ).json( comment );
 }
-/* istanbul ignore next */
+
 async function deleteComment ( req, res ) {
     const id = req.params.id;
-    /* istanbul ignore next */
     await Comment.delete( id ).then( () => {
         res.status( 204 ).send( '' );
     } );
