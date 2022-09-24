@@ -1,7 +1,6 @@
 'use strict';
 
-const UserModal = require('../models').UserModel;
-
+const {UserModal}=require('../models/index');
 module.exports = async (req, res, next) => {
   if( !req.headers.authorization ) (
     next('Invalid login')
