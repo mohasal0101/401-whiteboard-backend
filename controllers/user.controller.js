@@ -39,10 +39,29 @@ const login = async ( req, res ) => {
     }
 };
 
+const signin = async ( req, res ) => {
+    try {
+        const user = await UserModel.findOne( { where: { username: req.body.username } } );
+        const valid = await bcrypt.compare( req.body.password, user.password );
+        if ( valid ) {
+            const output = {
+                user: user,
+                token: user.token
+            };
+            res.status( 200 ).json( output );
+        } else {
+            throw new Error( 'Invalid Login' );
+        }
+    } catch ( error ) {
+        res.status( 403 ).send( 'Invalid Login' );
+    }
+};
+
 
 
 module.exports = {
     signup,
     allUser,
-    login
+    login,
+    signin
 };

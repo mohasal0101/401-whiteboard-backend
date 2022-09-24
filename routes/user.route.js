@@ -11,4 +11,8 @@ router.post( '/signin', login );
 router.post( '/signup', userAuth.saveUser, signup );
 router.get( '/users', bearerAuth, allUser );
 
+
+
+
+
 module.exports = router;

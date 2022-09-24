@@ -1,28 +1,25 @@
 'use strict';
 
-const UserModel = require( '../models/index' );
+const UserModal = require('../models').UserModel;
 
-module.exports = async ( req, res, next ) => {
-    if ( !req.headers.authorization ) {
-        next( 'Invalid Login' );
+module.exports = async (req, res, next) => {
+  if( !req.headers.authorization ) (
+    next('Invalid login')
+  )
+  const token = req.headers.authorization.split(' ')[1]
+  try {
+    const validUser = UserModal.authenticateToken(token);
+    console.log(validUser);
+    const userInfo = await UserModal.findOne({where: {username: validUser.username}});
+    if(userInfo) {
+      req.user = userInfo;
+      req.token = userInfo.token
+      next();
     } else {
-        const token = req.headers.authorization.split( ' ' ).pop();
-        try {
-            const validUser = await UserModel.authenticateToken( token );
-            const user = await UserModel.findOne( {
-                where: {
-                    username: validUser.username
-                }
-            } );
-            if ( user ) {
-                req.user = user;
-                req.token = user.token;
-                next();
-            } else {
-                next( 'Invalid Login' );
-            }
-        } catch ( error ) {
-            next( error );
-        } 
+      next('Invalid login')
     }
+
+  } catch(e) {
+    next(e.message || e)
+  }
 }
