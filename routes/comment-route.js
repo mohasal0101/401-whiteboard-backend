@@ -9,8 +9,14 @@ router.get( '/comment', getAllComments );
 router.post( '/comment/:id', addComment );
 router.put( '/comment/:id', updateComment );
 router.delete( '/comment/:id', deleteComment );
+router.get( '/comment/:postID/:userID', getCommentsByPostID );
 
-
+async function getCommentsByPostID ( req, res ) {
+    const postID = req.params.postID;
+    const userID = req.params.userID;
+    const comments = await Comment.readByPostID( postID, userID );
+    res.status( 200 ).json( comments );
+}
 
 async function getAllComments ( req, res ) {
     let comments = await Comment.read();
