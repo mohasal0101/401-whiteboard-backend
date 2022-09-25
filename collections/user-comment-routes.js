@@ -11,7 +11,6 @@ class userCommentRoutes {
             console.error( 'Error during the creation' );
         }
     }
-
     async read ( id ) {
         try {
             if ( id ) {
@@ -31,7 +30,6 @@ class userCommentRoutes {
             console.error( `Error while updating data with id: ${id}` );
         }
     }
-
     async delete ( id ) {
         try {
             return await this.model.destroy( { where: { id } } );

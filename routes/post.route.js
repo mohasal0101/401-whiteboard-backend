@@ -2,10 +2,14 @@
 
 const express = require( 'express' );
 const router = express.Router();
-const { Post, CommentModel } = require( '../models/index' );
+
+const { postCollection } = require( '../models/post.model' );
+const { commentModel } = require( '../models/comment.model' );
 const bearerAuth = require( '../middlewares/bearerAuth' );
 
-router.get( '/post', bearerAuth ,getAllPosts );
+
+
+router.get( '/post', bearerAuth, getAllPost);
 router.get( '/post/:id', getOnePost );
 router.post( '/post', newPost );
 router.put( '/post/:id', updatePost );
@@ -13,41 +17,54 @@ router.delete( '/post/:id', deletePost );
 
 
 
-
-async function getAllPosts ( req, res ) {
-    let posts = await Post.readWithComments( CommentModel );
-    res.status( 200 ).json( {
-        posts
-    } );
+async function getAllPost ( req, res ) {
+    const posts = await postCollection.read();
+    res.status( 200 ).json( posts );
 }
+
 
 async function getOnePost ( req, res ) {
     const id = req.params.id;
-    const post = await Post.readWithComments( id, CommentModel );
+    const post = await postCollection.read( id );
     res.status( 200 ).json( post );
 }
 
+
+
 async function newPost ( req, res ) {
     const newPost = req.body;
-    await Post.create( newPost )
+    await postCollection.create( newPost )
         .then( async () => {
-            await Post.read()
+            await postCollection.read()
                 .then( ( posts ) => {
-                    res.status( 200 ).json( posts );
+                    res.status( 201 ).json( posts );
                 } );
         } );
 }
 
+
 async function updatePost ( req, res ) {
     const id = req.params.id;
     const obj = req.body;
-    const post = await Post.update( id, obj );
+    const post = await postCollection.update( id, obj );
     res.status( 201 ).json( post );
 }
 
 async function deletePost ( req, res ) {
     const id = req.params.id;
-    await Post.delete( id ).then( () => {
+    const comments = await commentModel.findAll( {
+        where: {
+            postID: id
+        }
+    } );
+    comments.forEach( async ( comment ) => {
+        await commentModel.destroy( {
+            where: {
+                id: comment.id
+            }
+        } );
+    } );
+    await postCollection.delete( id ).then( () => {
         res.status( 204 ).send( '' );
     } );
 }
