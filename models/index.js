@@ -2,11 +2,10 @@
 
 const { Sequelize, DataTypes } = require( 'sequelize' );
 const post = require( './post.model' );
-const comment = require('./comment.model')
+const comment = require( './comment.model' );
+const user = require( './user.model' );
 const POSTGRES_URL = process.env.DATABASE_URL || "postgres://cpmmniuxrjxjbm:77bd22b12f7e21a76ed6e4790f49d85dad631ac97dba54b1268a53ef6cd9fbf4@ec2-34-253-119-24.eu-west-1.compute.amazonaws.com:5432/daf7o0u2mtge7j";
-const collection = require('../collections/user-comment-routes')
-const user = require('./user.model');
-
+const collection = require( '../collections/user-comment-routes' );
 
 const sequelizeOption = {
     dialectOptions: {
@@ -18,31 +17,32 @@ const sequelizeOption = {
 };
 
 let sequelize = new Sequelize( POSTGRES_URL, sequelizeOption );
-const postModel = post(sequelize, DataTypes);
-const commentModel = comment(sequelize,DataTypes);
-const UserModel = user(sequelize,DataTypes);
+const postModel = post( sequelize, DataTypes );
+const commentModel = comment( sequelize, DataTypes );
+const userModel = user( sequelize, DataTypes );
+
+postModel.hasMany( commentModel, { foreignKey: 'postID', sourceKey: 'id' } );
+commentModel.belongsTo( postModel, { foreignKey: 'postID', targetKey: 'id' } );
+
+userModel.hasMany( postModel, { foreignKey: 'userID', sourceKey: 'id' } );
+postModel.belongsTo( userModel, { foreignKey: 'userID', targetKey: 'id' } );
+
+userModel.hasMany( commentModel, { foreignKey: 'userID', sourceKey: 'id' } );
+commentModel.belongsTo( userModel, { foreignKey: 'userID', targetKey: 'id' } );
 
 
-postModel.hasMany(commentModel, {foreignKey: 'ownerID', sourceKey: 'id'})
-commentModel.belongsTo(postModel, {foreignKey: 'ownerID', targetKey: 'id'})
 
-UserModel.hasMany(postModel, {foreignKey: 'userID', sourceKey: 'id'})
-postModel.belongsTo(UserModel, {foreignKey: 'userID', targetKey: 'id'})
-
-UserModel.hasMany(commentModel, {foreignKey: 'ownerID', sourceKey: 'id'})
-commentModel.belongsTo(UserModel, {foreignKey: 'ownerID', targetKey: 'id'})
-
-const postCollection = new collection(postModel);
-const commentCollection =new collection(commentModel);
-const userCollection = new collection(UserModel);
-
+const postCollection = new collection( postModel );
+const commentCollection = new collection( commentModel );
+const userCollection = new collection( userModel );
 
 
 module.exports = {
     db: sequelize,
-    Post: postCollection,
-    Comment: commentCollection,
-    commentModel: commentModel,
-    UserModel: UserModel,
-    User: userCollection
+    postCollection,
+    commentCollection,
+    userCollection,
+    commentModel,
+    postModel,
+    userModel
 };

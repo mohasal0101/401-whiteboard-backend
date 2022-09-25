@@ -1,22 +1,20 @@
 'use strict';
 
-const Post = ( sequelize, DataTypes ) => sequelize.define( 'Post', {
+module.exports =  ( sequelize, DataTypes ) => sequelize.define( 'Post', {
     title: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: 'Null'
     },
     content: {
         type: DataTypes.STRING,
-        defaultValue: 'test done'
+        defaultValue: 'Testing content'
     },
-    userID:{
+    img : {
+        type: DataTypes.STRING,
+        defaultValue: false
+    },
+    userID: {
         type: DataTypes.INTEGER,
         allowNull: false
-    },
-    img: {
-        type: DataTypes.STRING,
-        allowNull: true
     }
 } );
-
-module.exports = Post;
