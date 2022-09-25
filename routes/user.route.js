@@ -13,6 +13,4 @@ router.get( '/users', bearerAuth, allUser );
 
 
 
-
-
 module.exports = router;
