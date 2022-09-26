@@ -14,7 +14,7 @@ router.put( '/comment/:id', updateComment );
 router.delete( '/comment/:id', deleteComment );
 
 async function addComment ( req, res ) {
-    const postID = req.params.postID;
+    const postID = req.params.id;
     const content = req.body.content;
     const userID = req.params.userID;
     const obj = {postID, content, userID};
