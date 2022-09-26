@@ -10,6 +10,7 @@ const commentRoute = require( './routes/comment-route' );
 const userRoute = require('./routes/user.route');
 
 
+
 app.use( cors() );
 app.use( express.json() );
 app.use( postRouter );

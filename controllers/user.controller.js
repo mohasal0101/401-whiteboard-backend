@@ -23,23 +23,33 @@ const allUser = async ( req, res ) => {
 };
 
 const login = async ( req, res ) => {
-    try {
-        const user = await userModel.findOne( { where: { username: req.body.username } } );
-        const valid = await bcrypt.compare( req.body.password, user.password );
-        if ( valid ) {
-            const output = {
-                user: user,
-                token: user.token
-            };
-            res.status( 200 ).json( output );
+    const basicHeader = req.headers.authorization.split( ' ' );
+    const encodedValue = basicHeader.pop();
+    const decodedValue = base64.decode( encodedValue );
+    const [ username, password ] = decodedValue.split( ':' );
+    console.log( username, password );
+    const user = await userModel.findOne( {
+        where: {
+            username: username
+                }
+    } );
+    if ( user ) {
+        const isSame = await bcrypt.compare( password, user.password );
+        if ( isSame ) {
+            return res.status( 200 ).json( {
+                "User": {
+                    "username": user.username,
+                    "id": user.id,
+                },
+                "token": user.token
+            } );
         } else {
-            throw new Error( 'Invalid Login' );
+            return res.status( 401 ).send( 'You are not authorized' );
         }
-    } catch ( error ) {
-        res.status( 403 ).send( 'Invalid Login' );
+    } else {
+        return res.status( 401 ).send( 'You are not authorized' );
     }
 };
-
 
 
 module.exports = {

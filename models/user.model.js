@@ -6,12 +6,6 @@ module.exports = ( sequelize, DataTypes ) => {
         username: {
             type: DataTypes.STRING,
             unique: true,
-            allowNull: false
-        },
-        email: {
-            type: DataTypes.STRING,
-            unique: true,
-            isEmail: true,
             allowNull: false,
         },
         password: {
@@ -27,6 +21,21 @@ module.exports = ( sequelize, DataTypes ) => {
             },
             set ( tokenObj ) {
                 return jwt.sign( tokenObj, process.env.JWT_SECRET );
+            }
+        },
+        role: {
+            type: DataTypes.ENUM( 'admin', 'user' ),
+            allowNull: false,
+            defaultValue: 'user'
+        },
+        capabilities: {
+            type: DataTypes.VIRTUAL,
+            get: function () {
+                const acl = {
+                    admin: [ 'read', 'create', 'update', 'delete' ],
+                    user: [ 'read', 'create' ]
+                };
+                return acl[ this.role ];
             }
         }
     } );
