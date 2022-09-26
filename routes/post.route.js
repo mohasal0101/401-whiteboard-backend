@@ -9,10 +9,10 @@ const bearerAuth = require( '../middlewares/bearerAuth' );
 const ACL = require( '../middlewares/ACL' );
 
 
-router.get( '/post', bearerAuth ,ACL ('read'), getAllPostwithComments );
-router.get( '/post/:id', bearerAuth, ACL ('read') ,getOnePost );
-router.post( '/post', bearerAuth, ACL ('create') ,newPost );
-router.put( '/post/:id', bearerAuth, ACL ('update') ,updatePost );
+router.get( '/post', ACL ('read'), getAllPostwithComments );
+router.get( '/post/:id',  ACL ('read') ,getOnePost );
+router.post( '/post',  ACL ('create') ,newPost );
+router.put( '/post/:id',  ACL ('update') ,updatePost );
 router.delete( '/post/:id', bearerAuth, ACL ('delete') ,deletePost );
 
 
