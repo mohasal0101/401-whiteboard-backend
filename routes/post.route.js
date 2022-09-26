@@ -6,21 +6,24 @@ const router = express.Router();
 const { postCollection } = require( '../models/post.model' );
 const { commentModel } = require( '../models/comment.model' );
 const bearerAuth = require( '../middlewares/bearerAuth' );
+const ACL = require( '../middlewares/ACL' );
+
+
+router.get( '/post', bearerAuth ,ACL ('read'), getAllPostwithComments );
+router.get( '/post/:id', bearerAuth, ACL ('read') ,getOnePost );
+router.post( '/post', bearerAuth, ACL ('create') ,newPost );
+router.put( '/post/:id', bearerAuth, ACL ('update') ,updatePost );
+router.delete( '/post/:id', bearerAuth, ACL ('delete') ,deletePost );
 
 
 
-router.get( '/post', bearerAuth, getAllPost);
-router.get( '/post/:id', getOnePost );
-router.post( '/post', newPost );
-router.put( '/post/:id', updatePost );
-router.delete( '/post/:id', deletePost );
-
-
-
-async function getAllPost ( req, res ) {
-    const posts = await postCollection.read();
-    res.status( 200 ).json( posts );
+async function getAllPostwithComments ( req, res ) {
+    const post = await postCollection.findAll( {
+        include: commentModel
+    } );
+    res.status( 200 ).json( post );
 }
+
 
 
 async function getOnePost ( req, res ) {
