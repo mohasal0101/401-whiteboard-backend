@@ -37,14 +37,12 @@ const commentCollection = new collection( commentModel );
 const userCollection = new collection( userModel );
 
 
-// export the database connection and models
-
 module.exports = {
     db: sequelize,
-    postCollection: postCollection,
-    commentCollection: commentCollection,
-    userCollection: userCollection,
-    postModel: postModel,
-    commentModel: commentModel,
+    postCollection,
+    commentCollection,
+    userCollection,
+    commentModel,
+    postModel,
     userModel
 };

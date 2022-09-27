@@ -1,20 +1,18 @@
 'use strict';
 const bcrypt = require( 'bcrypt' );
 const base64 = require( 'base-64' );
-const { commentModel,
-     postModel,
-      userModel
-     } = require( '../models/index' );
+const { commentModel, postModel, userModel } = require( '../models/index' );
 
 const signup = async ( req, res ) => {
     try {
-        const { username,  password,  role } = req.body;
-        const data = {
+        const { username, email, password, role } = req.body;
+        const output = {
             username,
-            password: await bcrypt.hash( password, 15 ),
+            email,
+            password: await bcrypt.hash( password, 10 ),
             role
         };
-        const user = await userModel.create( data );
+        const user = await userModel.create( output );
         if ( user ) {
             res.status( 200 ).json( {
                 "user": {
@@ -25,7 +23,7 @@ const signup = async ( req, res ) => {
                 "token": user.token
             } );
         } else {
-            res.status( 500 ).send( 'Internal Server Error' );
+            res.status( 500 ).send( 'Error Creating User' );
         }
     } catch ( error ) {
         console.log( error );

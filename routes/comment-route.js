@@ -3,18 +3,24 @@
 const express = require( 'express' );
 const router = express.Router();
 
-const { commentCollection } = require( '../models/comment.model' );
-const { userModel } = require( '../models/user.model' );
-const { commentModel } = require( '../models/comment.model' );
+const { commentCollection, userModel, commentModel } = require( '../models/index' );
 
-
+router.get( '/comment', getAllComments );
 router.post( '/comment/:postID/:userID', addComment );
 router.get( '/comment/:postID/:userID', getComment );
 router.put( '/comment/:id', updateComment );
 router.delete( '/comment/:id', deleteComment );
 
+
+async function getAllComments ( req, res ) {
+    let comments = await commentCollection.read();
+    res.status( 200 ).json( {
+        comments
+    } );
+}
+
 async function addComment ( req, res ) {
-    const postID = req.params.id;
+    const postID = req.params.postID;
     const content = req.body.content;
     const userID = req.params.userID;
     const obj = {postID, content, userID};
@@ -51,7 +57,6 @@ async function getComment ( req, res ) {
     } );
     res.status( 200 ).json( response );
 }
-
 
 async function updateComment ( req, res ) {
     const id = req.params.id;
