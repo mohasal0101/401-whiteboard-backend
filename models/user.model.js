@@ -13,6 +13,11 @@ const User = sequelize.define( 'User', {
         type: DataTypes.STRING,
         allowNull: false
     },
+
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     token: {
         type: DataTypes.VIRTUAL,
         get: function () {
@@ -23,7 +28,7 @@ const User = sequelize.define( 'User', {
         }
     },
     role: {
-        type: DataTypes.ENUM( 'admin', 'user' ),
+        type: DataTypes.ENUM( 'user', 'admin' ),
         defaultValue: 'user',
         allowNull: false
     },
@@ -40,7 +45,7 @@ const User = sequelize.define( 'User', {
 } );
 
 User.authenticateToken = token => {
-    return jwt.verify( token, process.env.SECRET, ( err, decoded ) => {
+    return jwt.verify( token, `${process.env.TOKEN_SECRET}`, ( err, decoded ) => {
         if ( err ) {
             return err;
         } else {

@@ -1,20 +1,19 @@
 'use strict';
 
+const role = require("role");
+
 module.exports =  ( sequelize, DataTypes ) => sequelize.define( 'Post', {
     title: {
         type: DataTypes.STRING,
-        allowNull: 'Null'
+        allowNull: false
     },
     content: {
         type: DataTypes.STRING,
-        defaultValue: 'Testing content'
-    },
-    img : {
-        type: DataTypes.STRING,
-        defaultValue: false
+        defaultValue: 'test'
     },
     userID: {
         type: DataTypes.INTEGER,
         allowNull: false
     }
+
 } );
