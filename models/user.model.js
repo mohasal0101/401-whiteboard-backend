@@ -21,14 +21,14 @@ const User = sequelize.define( 'User', {
     token: {
         type: DataTypes.VIRTUAL,
         get: function () {
-            return jwt.sign( {username: this.username}, `${process.env.TOKEN_SECRET}`);
+            return jwt.sign( {username: this.username}, `${process.env.JWT_SECRET}`);
         },
         set ( tokenObj ) {
-            return jwt.sign( tokenObj, `${process.env.TOKEN_SECRET}` );
+            return jwt.sign( tokenObj, `${process.env.JWT_SECRET}` );
         }
     },
     role: {
-        type: DataTypes.ENUM( 'user', 'admin' ),
+        type: DataTypes.STRING( 'user', 'admin' ),
         defaultValue: 'user',
         allowNull: false
     },
