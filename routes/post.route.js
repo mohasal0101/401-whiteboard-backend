@@ -33,6 +33,7 @@ async function getAllPosts  ( req, res ) {
             id: post.id,
             title: post.title,
             content: post.content,
+            img: post.img,
             user : {
                 id: post.User.id,
                 username: post.User.username,
