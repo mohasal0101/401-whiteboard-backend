@@ -17,17 +17,14 @@ router.delete( '/post/:id', bearerAuth, Acl('delete'), deletePost );
 
 
 async function getAllPosts  ( req, res ) {
-
     const comments = await commentModel.findAll({include: [ userModel ]});
     let posts = await postModel.findAll( {include: [userModel]} );
-
     posts = posts.map( ( post ) => {
         post.dataValues.comments = comments.filter( ( comment ) => {
             return comment.postID === post.id;
         } );
         return post;
     } );
-
     const response = posts.map( ( post ) => {
         return {
             id: post.id,
@@ -38,7 +35,6 @@ async function getAllPosts  ( req, res ) {
                 id: post.User.id,
                 username: post.User.username,
             },
-            
             comments: post.dataValues.comments?.map( ( comment ) => {
                 return {
                     id: comment.id,
@@ -117,5 +113,3 @@ async function deletePost ( req, res ) {
 
 
 module.exports = router;
-
-

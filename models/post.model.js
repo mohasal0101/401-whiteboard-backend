@@ -14,7 +14,7 @@ module.exports =  ( sequelize, DataTypes ) => sequelize.define( 'Post', {
 
     img: {
         type: DataTypes.STRING,
-        defaultValue: 'test'
+        defaultValue: 'https://wallpapercave.com/wp/wp4923991.png'
     },
     userID: {
         type: DataTypes.INTEGER,
